@@ -1,0 +1,158 @@
+package userInterface;
+import data.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.text.*;
+import java.util.*;
+import java.util.logging.*;
+import javax.swing.*;
+/**
+ * @author Agus
+ */
+class FrameRegistration implements ItemListener{
+    String totalPeriode;
+    JLabel labelNim,labelNama,labelNomorHp,labelPeriode,labelTanggalDaftar;
+    JTextField textFieldNim,textFieldNama,textFieldNomorHp,textFieldTanggal;
+    JCheckBox[] checkBox=new JCheckBox[6];
+    JTabbedPane panelTab;
+    JPanel panelMain,panelBawah;
+    JPanel panelAtas1,panelAtas2;
+    JPanel panelAtas1a,panelAtas1b,panelAtas1aCombo;
+    JButton buttonSave,buttonClear;
+    JComboBox comboBoxTahun, comboBoxBulan;
+    String[] tahun = {"Pilih","2016","2015","2014","2013","2012","2011","2010","2009","2008","2007","2006","2005"};
+    String[] bulan = {"Pilih","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"};
+    String kelengkapan="000000",simpanData;
+    public FrameRegistration(){
+        //panel
+        panelMain=new JPanel();
+        panelTab=new JTabbedPane();
+        panelAtas1=new JPanel();
+        panelAtas1a=new JPanel();
+        panelAtas1aCombo=new JPanel();
+        panelAtas1b=new JPanel();
+        panelAtas2=new JPanel();
+        panelBawah=new JPanel();
+        //label
+        labelNim=new JLabel("NIM");
+        labelNama=new JLabel("Nama");
+        labelNomorHp=new JLabel("Nomor HP");
+        labelPeriode=new JLabel("Periode");
+        labelTanggalDaftar=new JLabel("Tanggal Daftar  ");
+        //text field
+        textFieldNim=new JTextField();
+        textFieldNama=new JTextField();
+        textFieldNomorHp=new JTextField();
+        comboBoxTahun = new JComboBox();
+        for (int i = 0; i < tahun.length; i++) {
+            comboBoxTahun.addItem(tahun[i]);
+        }
+        comboBoxBulan=new JComboBox();
+        for (int i = 0; i < bulan.length; i++) {
+            comboBoxBulan.addItem(bulan[i]);
+        }
+        textFieldTanggal=new JTextField();
+        //button
+        buttonSave=new JButton("Save");
+        buttonClear=new JButton("Clear");
+        //set layout
+        panelMain.setLayout(new BorderLayout());
+        panelMain.setPreferredSize(new Dimension(480, 236));
+        panelAtas1.setLayout(new BorderLayout());
+        panelAtas1a.setLayout(new GridLayout(5, 1));
+        panelAtas1aCombo.setLayout(new FlowLayout(FlowLayout.LEADING));
+        panelAtas1b.setLayout(new GridLayout(5, 1));
+        panelAtas2.setLayout(new FlowLayout(FlowLayout.LEADING));
+        panelBawah.setLayout(new FlowLayout(FlowLayout.TRAILING));
+        //checkbox
+        checkBox[0] = new JCheckBox("Daftar Nilai");
+        checkBox[1] = new JCheckBox("Naskah TA");
+        checkBox[2] = new JCheckBox("Bebas Pinjam LAB");
+        checkBox[3] = new JCheckBox("Bebas Pinjam Dosen");
+        checkBox[4] = new JCheckBox("Bukti Laporan KP");
+        checkBox[5] = new JCheckBox("Surat KKL/KI");
+        //set textfild
+        textFieldTanggal.setEditable(false);
+        textFieldTanggal.setText(getCurrentDate());
+        //add listener
+        for (int i = 0; i < checkBox.length; i++) {
+            checkBox[i].addItemListener(this);
+        }
+        buttonClear.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Clear();
+            }
+        });
+        buttonSave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DataMahasiswa data = new DataMahasiswa();
+                try {
+                    totalPeriode=String.valueOf(comboBoxTahun.getSelectedItem())+
+                            data.periodeMonthToNumber(String.valueOf(comboBoxBulan.getSelectedItem()));
+                    InputErrorCheck dataInput = new InputErrorCheck();
+                    String[] splitTanggal=textFieldTanggal.getText().split("[/]");
+                    dataInput.cekInput(textFieldNim.getText(),textFieldNama.getText(),
+                            textFieldNomorHp.getText(),comboBoxBulan.getSelectedItem(),
+                            comboBoxTahun.getSelectedItem(),splitTanggal[2]+"/"+splitTanggal[1]+"/"+splitTanggal[0],kelengkapan,totalPeriode);
+                    } catch (Exception ex) {
+                    Logger.getLogger(FrameRegistration.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        //add panel
+        panelAtas1a.add(labelNim);
+        panelAtas1a.add(labelNama);
+        panelAtas1a.add(labelNomorHp);
+        panelAtas1a.add(labelPeriode);
+        panelAtas1a.add(labelTanggalDaftar);
+        panelAtas1b.add(textFieldNim);
+        panelAtas1b.add(textFieldNama);
+        panelAtas1b.add(textFieldNomorHp);
+        panelAtas1aCombo.add(comboBoxBulan);
+        panelAtas1aCombo.add(comboBoxTahun);
+        panelAtas1b.add(panelAtas1aCombo);
+        panelAtas1b.add(textFieldTanggal);
+        panelAtas1.add(panelAtas1a,BorderLayout.WEST);
+        panelAtas1.add(panelAtas1b,BorderLayout.CENTER);
+        for (int i = 0; i < checkBox.length; i++) {
+            panelAtas2.add(checkBox[i]);
+        }
+        panelTab.addTab("Data Pribadi",panelAtas1);
+        panelTab.addTab("Kelengkapan",panelAtas2);
+        panelBawah.add(buttonClear);
+        panelBawah.add(buttonSave);
+        panelMain.add(panelTab,BorderLayout.CENTER);
+        panelMain.add(panelBawah,BorderLayout.SOUTH);
+    }
+    private String getCurrentDate() {
+        Date current = new Date();
+        SimpleDateFormat frmt = new SimpleDateFormat("dd/MM/yyyy");
+        String dateString = frmt.format(current);
+        return dateString;
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        kelengkapan = "";
+        for (int i = 0; i < checkBox.length; i++) {
+            if (checkBox[i].isSelected()==true) {
+                kelengkapan+=1;
+            }
+            else if (checkBox[i].isSelected()==false) {
+                kelengkapan+=0;
+            }
+        }
+    }
+    public void Clear(){
+        textFieldNim.setText("");
+        textFieldNama.setText("");
+        textFieldNomorHp.setText("");
+        comboBoxBulan.setSelectedIndex(0);
+        comboBoxTahun.setSelectedIndex(0);
+        for (int i = 0; i < checkBox.length; i++) {
+            checkBox[i].setSelected(false);
+        }
+    }
+}

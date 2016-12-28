@@ -1,0 +1,134 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package UKM3;
+
+import UKM2.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.event.*;
+
+/**
+ *
+ * @author Lycorice
+ */
+class AddMasyarakat extends JInternalFrame{
+    MasyarakatSekitar mys;
+    private String nama;
+    private String nomor;
+    private String tempat;
+    private String tanggalLahir;
+    Container content=getContentPane();
+    JLabel labelNama=new JLabel("Nama Masyarakat");
+    JLabel labelNomor=new JLabel("Nomor Masyarakat");
+    JLabel labelTempat=new JLabel("Tempat Lahir ");
+    JLabel labelTanggalLahir=new JLabel("Tanggal Lahir");
+    JTextField inputNama=new JTextField();
+    JTextField inputNomor=new JTextField();
+    JTextField inputTempat=new JTextField();
+    JTextField inputTanggalLahir=new JTextField();
+    JButton buttonSave=new JButton("Save");
+    public AddMasyarakat() throws IOException{
+        setTitle("Tambah Masyarakat");
+        setSize(500, 200);
+        buttonSave.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    setNama(String.valueOf(inputNama.getText()));
+                    setNomor(String.valueOf(inputNomor.getText()));
+                    setTempat(String.valueOf(inputTempat.getText()));
+                    setTanggalLahir(String.valueOf(inputTanggalLahir.getText()));
+                    mys=new MasyarakatSekitar(getNomor(),getNama(),getTempat()+", "+getTanggalLahir());
+                    JOptionPane.showMessageDialog(null,"Nama : "+mys.getNama()+"\nNomor : "+
+                            mys.getNomor()+"\nTempat, tanggal lahir : "+mys.getTempatTanggalLahir());
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+                }
+            }
+        });
+        content.setLayout(new BorderLayout());
+        JPanel panel1=new JPanel();
+        panel1.setLayout(new GridLayout(4, 2));
+        panel1.add(labelNama);
+        panel1.add(inputNama);
+        panel1.add(labelNomor);
+        panel1.add(inputNomor);
+        panel1.add(labelTempat);
+        panel1.add(inputTempat);
+        panel1.add(labelTanggalLahir);
+        panel1.add(inputTanggalLahir);
+        JPanel panel2=new JPanel();
+        panel2.setLayout(new FlowLayout());
+        panel2.add(buttonSave);
+        content.add(panel1,BorderLayout.CENTER);
+        content.add(panel2,BorderLayout.SOUTH);
+    }
+
+    /**
+     * @return the nama
+     */
+    public String getNama() {
+        return nama;
+    }
+
+    /**
+     * @param nama the nama to set
+     */
+    public void setNama(String nama) throws Exception {
+        if (nama.matches("\\D*")) this.nama = nama;
+        else throw new Exception("Karakter salah. Hanya boleh huruf.");
+    }
+
+    /**
+     * @return the nomor
+     */
+    public String getNomor() {
+        return nomor;
+    }
+
+    /**
+     * @param nomor the nomor to set
+     */
+    public void setNomor(String nomor) throws Exception {
+        if (nomor.matches("\\d{4}")) this.nomor = nomor;
+        else throw new Exception("Nomor harus angka dan berjumlah 9 digit.");
+    }
+
+    /**
+     * @return the tempat
+     */
+    public String getTempat() {
+        return tempat;
+    }
+
+    /**
+     * @param tempat the tempat to set
+     */
+    public void setTempat(String tempat) throws Exception {
+        if (tempat.matches("\\D*")) this.tempat = tempat;
+        else throw new Exception("Penulisan tempat salah");
+    }
+
+    /**
+     * @return the tanggalLahir
+     */
+    public String getTanggalLahir() {
+        return tanggalLahir;
+    }
+
+    /**
+     * @param tanggalLahir the tanggalLahir to set
+     */
+    public void setTanggalLahir(String tanggalLahir) throws Exception {
+        if (tanggalLahir.matches("[0-3][0-9][ ][a-zA-Z]*[ ][0-9]{4}")) this.tanggalLahir = tanggalLahir;
+        else throw new Exception("Format penulisan tanggal (dd mmmmm yyyy)");
+    }
+}
