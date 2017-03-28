@@ -32,7 +32,7 @@ public class CobaTweet {
 //        Status myStatus = myTwitter.updateStatus("Test 2");
 //        System.out.println("Lihat account Twitter Anda sekarang, status telah berhasil di-post.");
         TwitterStream twitterStream;
-        twitterStream.;
+//        twitterStream;
         System.out.println();
     }
     catch (Exception ex) {
